@@ -1,138 +1,134 @@
 import streamlit as st
 import pandas as pd
-import seaborn as sns
 import matplotlib.pyplot as plt
-import os
+import seaborn as sns
 
-# --- PAGE CONFIG ---
-st.set_page_config(page_title="AirPreQ – Air Quality Dashboard", layout="wide")
+# ---------- CONFIG ----------
+st.set_page_config(page_title="AirPreQ", layout="wide")
 
-# --- STYLING ---
-def set_theme(mode):
-    if mode == "Dark":
-        st.markdown("""
-            <style>
-                body { background-color: #1e1e1e; color: white; }
-                .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4 {
-                    color: #f5f5f5;
-                }
-                .aqi-box { background: #292929; color: white; }
-            </style>
-        """, unsafe_allow_html=True)
+# ---------- STYLING ----------
+st.markdown("""
+    <style>
+    .hero {
+        background: linear-gradient(to right, rgba(0,0,0,0.7), rgba(0,0,0,0.4)), 
+        url("https://images.unsplash.com/photo-1535920527007-57f6ef7c9c9e") no-repeat center center;
+        background-size: cover;
+        color: white;
+        text-align: center;
+        padding: 120px 20px;
+        border-radius: 8px;
+    }
+    .hero h1 {
+        font-size: 48px;
+    }
+    .hero p {
+        font-size: 18px;
+        font-weight: bold;
+        color: #f94144;
+    }
+    .hero .btn {
+        margin-top: 20px;
+        padding: 12px 25px;
+        background-color: #e63946;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# ---------- PAGE SELECTION ----------
+page = st.selectbox("Choose Page", ["Home", "Dashboard", "About Us", "Services", "Contact Us"])
+
+# ---------- HOME PAGE ----------
+if page == "Home":
+    st.markdown("""
+        <div class="hero">
+            <p>// AIR MONITORING //</p>
+            <h1>Advanced Air Quality Monitoring System</h1>
+            <button class="btn">Learn More</button>
+        </div>
+    """, unsafe_allow_html=True)
+
+# ---------- DASHBOARD ----------
+elif page == "Dashboard":
+    st.header("🌍 Air Quality Dashboard")
+
+    @st.cache_data
+    def load_data(file):
+        try:
+            df = pd.read_csv(file)
+            df.columns = df.columns.str.strip()  # Strip spaces
+            st.write("Available Columns:", df.columns.tolist())  # Debug
+            df['Date'] = pd.to_datetime(df['Date'])
+            return df
+        except Exception as e:
+            st.error(f"Error loading file: {e}")
+            return pd.DataFrame()
+
+    df = load_data("dataset.csv")
+
+    if df.empty:
+        st.warning("Dataset not available or incorrect format.")
+    elif 'City' not in df.columns:
+        st.error("❌ 'City' column not found in dataset.")
     else:
-        st.markdown("""
-            <style>
-                .aqi-box {
-                    background: linear-gradient(145deg, #e0e5ec, #ffffff);
-                    color: black;
-                }
-            </style>
-        """, unsafe_allow_html=True)
+        unique_cities = sorted(df['City'].unique())
+        selected_city = st.selectbox("Select a city", unique_cities)
+        city_data = df[df['City'] == selected_city]
 
-# --- AQI CLASSIFICATION ---
-def classify_aqi(aqi):
-    try:
-        aqi = float(aqi)
-        if aqi <= 50: return 'Good'
-        elif aqi <= 100: return 'Moderate'
-        elif aqi <= 200: return 'Unhealthy for Sensitive'
-        elif aqi <= 300: return 'Unhealthy'
-        elif aqi <= 400: return 'Very Unhealthy'
-        else: return 'Hazardous'
-    except:
-        return 'Unknown'
+        def classify_aqi(aqi):
+            if aqi <= 50: return 'Good'
+            elif aqi <= 100: return 'Moderate'
+            elif aqi <= 200: return 'Unhealthy for Sensitive'
+            elif aqi <= 300: return 'Unhealthy'
+            elif aqi <= 400: return 'Very Unhealthy'
+            else: return 'Hazardous'
 
-# --- LOAD DATA ---
-def load_data(uploaded_file=None):
-    try:
-        if uploaded_file:
-            df = pd.read_csv(uploaded_file)
-        else:
-            df = pd.read_csv("dataset.csv")
-        required_cols = ['City', 'Date', 'PM2.5', 'PM10', 'NO2', 'SO2', 'O3', 'AQI']
-        for col in required_cols:
-            if col not in df.columns:
-                raise ValueError(f"Missing required column: {col}")
-        df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
-        df.dropna(subset=['Date', 'City', 'AQI'], inplace=True)
-        df['AQI_Level'] = df['AQI'].apply(classify_aqi)
-        return df
-    except Exception as e:
-        st.error(f"❌ Error loading data: {e}")
-        return pd.DataFrame()
+        city_data['AQI_Level'] = city_data['AQI'].apply(classify_aqi)
 
-# --- SIDEBAR ---
-st.sidebar.title("⚙ Settings")
-theme = st.sidebar.radio("Theme", ["Light", "Dark"])
-set_theme(theme)
+        col1, col2 = st.columns(2)
+        with col1:
+            st.metric("Average AQI", f"{city_data['AQI'].mean():.2f}")
+        with col2:
+            st.metric("Max AQI", f"{city_data['AQI'].max()}")
 
-uploaded_file = st.sidebar.file_uploader("Upload Your Dataset (CSV)", type=["csv"])
-df = load_data(uploaded_file)
+        st.subheader("📈 AQI Trend Over Time")
+        fig1, ax1 = plt.subplots(figsize=(10, 4))
+        ax1.plot(city_data['Date'], city_data['AQI'], color='blue')
+        ax1.set_title("AQI Over Time")
+        ax1.set_xlabel("Date")
+        ax1.set_ylabel("AQI")
+        ax1.grid(True)
+        st.pyplot(fig1)
 
-if df.empty:
-    st.warning("No valid data to display. Please upload a proper air quality CSV.")
-    st.stop()
+        st.subheader("📊 AQI Category Distribution")
+        level_counts = city_data['AQI_Level'].value_counts()
+        fig2, ax2 = plt.subplots(figsize=(8, 4))
+        sns.barplot(x=level_counts.index, y=level_counts.values, palette="coolwarm", ax=ax2)
+        ax2.set_ylabel("Days")
+        ax2.set_xlabel("AQI Category")
+        st.pyplot(fig2)
 
-# --- UI HEADER ---
-st.title("🛰 AirPreQ – Air Quality Monitoring Dashboard")
-st.caption("Copyright © 2025 | Team *AirPreQ*")
+# ---------- ABOUT US ----------
+elif page == "About Us":
+    st.header("About AirPreQ")
+    st.write("AirPreQ is a next-gen air quality monitoring solution combining real-time AQI analysis with beautiful UI.")
 
-# --- CITY SELECTION ---
-unique_cities = sorted(df['City'].unique())
-selected_city = st.selectbox("Select a City", unique_cities)
-city_df = df[df['City'] == selected_city].sort_values('Date')
+# ---------- SERVICES ----------
+elif page == "Services":
+    st.header("Our Services")
+    st.write("- Real-time AQI Monitoring\n- Data Visualization\n- City-wide Reports\n- Health Advisory")
 
-# --- AQI DISPLAY ---
-latest_aqi = city_df.iloc[-1]['AQI']
-aqi_status = classify_aqi(latest_aqi)
-avg_aqi = city_df['AQI'].mean()
+# ---------- CONTACT ----------
+elif page == "Contact Us":
+    st.header("Contact Us")
+    st.write("📧 support@airpreq.com\n📞 +1 234 567 890")
 
-aqi_color = {
-    'Good': 'green',
-    'Moderate': 'yellow',
-    'Unhealthy for Sensitive': 'orange',
-    'Unhealthy': 'red',
-    'Very Unhealthy': 'purple',
-    'Hazardous': 'maroon',
-    'Unknown': 'gray'
-}.get(aqi_status, 'gray')
-
-col1, col2, col3 = st.columns(3)
-col1.markdown(f"<div class='aqi-box' style='border-radius:15px; padding:20px; text-align:center; font-weight:bold; color:{aqi_color};'>"
-              f"Real-time AQI<br><span style='font-size:24px'>{latest_aqi:.0f}</span><br>{aqi_status}</div>", unsafe_allow_html=True)
-col2.markdown(f"<div class='aqi-box' style='border-radius:15px; padding:20px; text-align:center;'>"
-              f"Average AQI<br><span style='font-size:24px'>{avg_aqi:.2f}</span></div>", unsafe_allow_html=True)
-col3.markdown(f"<div class='aqi-box' style='border-radius:15px; padding:20px; text-align:center;'>"
-              f"Data Range<br><span style='font-size:20px'>{city_df['Date'].min().date()} ➜ {city_df['Date'].max().date()}</span></div>", unsafe_allow_html=True)
-
-# --- TREND VISUALS ---
-st.subheader("📈 Pollutant Trends")
-pollutants = ['PM2.5', 'PM10', 'NO2', 'SO2', 'O3']
-
-for pollutant in pollutants:
-    if pollutant in city_df.columns:
-        fig, ax = plt.subplots(figsize=(10, 3))
-        sns.lineplot(data=city_df, x='Date', y=pollutant, ax=ax, color='deepskyblue')
-        ax.set_title(f"{pollutant} Trend in {selected_city}")
-        ax.set_ylabel(f"{pollutant} (μg/m³)")
-        ax.grid(True)
-        st.pyplot(fig)
-
-# --- AQI LEVEL DISTRIBUTION ---
-st.subheader("📊 AQI Category Distribution")
-
-aqi_order = ['Good', 'Moderate', 'Unhealthy for Sensitive', 'Unhealthy', 'Very Unhealthy', 'Hazardous']
-level_counts = city_df['AQI_Level'].value_counts().reindex(aqi_order, fill_value=0)
-
-fig2, ax2 = plt.subplots()
-sns.barplot(x=level_counts.index, y=level_counts.values,
-            palette=['green', 'yellow', 'orange', 'red', 'purple', 'maroon'], ax=ax2)
-ax2.set_title(f"AQI Levels in {selected_city}")
-ax2.set_ylabel("Number of Days")
-ax2.set_xlabel("AQI Category")
-ax2.tick_params(axis='x', rotation=30)
-st.pyplot(fig2)
-
-# --- FOOTER ---
-st.markdown("---")
-st.markdown("🧠 Built by *Team AirPreQ* | Powered by Streamlit, Pandas, Seaborn")
+# ---------- FOOTER ----------
+st.markdown("""
+<hr>
+<p style='text-align:center'>© 2025 Team AirPreQ. All rights reserved.</p>
+""", unsafe_allow_html=True)
