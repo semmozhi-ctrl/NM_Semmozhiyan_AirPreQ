@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Services | AirPreQ</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  {% include 'navbar.html' %}
+  <section class="services">
+    <h2>Our Services</h2>
+    <div class="cards">
+      <div class="card">
+        <h3>📊 Predefined Dataset</h3>
+        <p>Analyze air quality using our trusted dataset.</p>
+        <a href="/dashboard/predefined" class="btn">Open Dashboard</a>
+      </div>
+      <div class="card">
+        <h3>🗂 Upload Your Data</h3>
+        <p>Get insights from your own air quality files.</p>
+        <a href="/dashboard/upload" class="btn">Upload Data</a>
+      </div>
+      <div class="card">
+        <h3>🌐 Live AQI via API</h3>
+        <p>Real-time AQI from global monitoring APIs.</p>
+        <a href="/dashboard/live" class="btn">View Live Data</a>
+      </div>
+    </div>
+  </section>
+</body>
+</html>
