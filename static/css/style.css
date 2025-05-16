@@ -1,19 +1,4 @@
 body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-}
-
-header, nav, footer {
-  background: #101010;
-  color: white;
-  padding: 1rem;
-  text-align: center;
-}
-
-.container {
-  padding: 20px;
-}
-
-button {
-  margin-top: 10px;
+  background: #f9f9f9;
+  font-family: 'Segoe UI', sans-serif;
 }

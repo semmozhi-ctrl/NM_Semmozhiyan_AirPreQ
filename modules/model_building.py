@@ -1,1 +1,2 @@
-# ML model building functions
+def build_model():
+    print("Model building module placeholder.")
