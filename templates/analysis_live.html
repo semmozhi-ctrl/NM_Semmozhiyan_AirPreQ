@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Live AQI Prediction</h1>
+<form method="post">
+    <label>City:</label>
+    <input type="text" name="city" required><br>
+    <label>State:</label>
+    <input type="text" name="state" required><br>
+    <label>Country:</label>
+    <input type="text" name="country" required><br>
+    <button type="submit">Get Live AQI Prediction</button>
+</form>
+
+{% if predicted_aqi is not none %}
+    <h2>Predicted AQI for {{ city }}: {{ predicted_aqi | round(2) }}</h2>
+{% endif %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul style="color: red;">
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+{% endblock %}

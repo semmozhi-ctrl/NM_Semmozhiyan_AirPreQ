@@ -1,51 +1,104 @@
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, flash
 import os
 import pandas as pd
-from preprocessing import preprocess_data
-from eda import generate_visualizations
-from werkzeug.utils import secure_filename
+from modules import data_preprocessing, model_training, model_evaluation, api_fetcher, visualizations
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'data'
-app.config['OUTPUT_FOLDER'] = 'static/outputs'
-os.makedirs(app.config['OUTPUT_FOLDER'], exist_ok=True)
+app.secret_key = "your_secret_key"
+
+# Load predefined dataset once
+DATA_PATH = os.path.join('data', 'sample_dataset.csv')
+df_predefined = data_preprocessing.load_data(DATA_PATH)
+df_preprocessed = data_preprocessing.preprocess_data(df_predefined)
+lr_model, rf_model, X_test, y_test = model_training.train_models(df_preprocessed)
+
 
 @app.route('/')
-def index():
-    return render_template('index.html')
+def home():
+    return render_template('home.html')
 
-@app.route('/upload', methods=['GET', 'POST'])
-def upload():
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+
+@app.route('/contact')
+def contact():
+    return render_template('contact.html')
+
+
+@app.route('/analysis/predefined')
+def analysis_predefined():
+    corr_fig = visualizations.correlation_heatmap(df_preprocessed)
+    aq_trend_fig = visualizations.aqi_trend(df_preprocessed)
+    feat_imp_fig = visualizations.feature_importance(rf_model, df_preprocessed)
+
+    corr_json = corr_fig.to_json()
+    aq_trend_json = aq_trend_fig.to_json()
+    feat_imp_json = feat_imp_fig.to_json()
+
+    return render_template('analysis_predefined.html',
+                           corr_json=corr_json,
+                           aq_trend_json=aq_trend_json,
+                           feat_imp_json=feat_imp_json)
+
+
+@app.route('/analysis/upload', methods=['GET', 'POST'])
+def analysis_upload():
     if request.method == 'POST':
-        uploaded_file = request.files['file']
-        if uploaded_file.filename.endswith('.csv'):
-            filename = secure_filename(uploaded_file.filename)
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            uploaded_file.save(file_path)
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file:
+            df = pd.read_csv(file)
+            df_proc = data_preprocessing.preprocess_data(df)
+            lr, rf, X_test_up, y_test_up = model_training.train_models(df_proc)
+            rmse_lr, r2_lr = model_evaluation.evaluate_model(lr, X_test_up, y_test_up)
+            rmse_rf, r2_rf = model_evaluation.evaluate_model(rf, X_test_up, y_test_up)
 
-            df = pd.read_csv(file_path)
-            df_clean = preprocess_data(df)
-            plot_path = generate_visualizations(df_clean, filename)
+            corr_fig = visualizations.correlation_heatmap(df_proc)
+            aq_trend_fig = visualizations.aqi_trend(df_proc)
+            feat_imp_fig = visualizations.feature_importance(rf, df_proc)
 
-            return render_template('upload.html', plot_path=plot_path)
-    return render_template('upload.html')
+            corr_json = corr_fig.to_json()
+            aq_trend_json = aq_trend_fig.to_json()
+            feat_imp_json = feat_imp_fig.to_json()
 
-@app.route('/predefined')
-def predefined():
-    df = pd.read_csv('data/dataset.csv')
-    df_clean = preprocess_data(df)
-    plot_path = generate_visualizations(df_clean, "predefined")
+            return render_template('analysis_upload.html',
+                                   rmse_lr=rmse_lr, r2_lr=r2_lr,
+                                   rmse_rf=rmse_rf, r2_rf=r2_rf,
+                                   corr_json=corr_json,
+                                   aq_trend_json=aq_trend_json,
+                                   feat_imp_json=feat_imp_json)
+    return render_template('analysis_upload.html')
 
-    return render_template('predefined.html', plot_path=plot_path)
 
-@app.route('/live')
-def live():
-    # Reusing predefined for now
-    df = pd.read_csv('data/dataset.csv')
-    df_clean = preprocess_data(df)
-    plot_path = generate_visualizations(df_clean, "live")
+@app.route('/analysis/live', methods=['GET', 'POST'])
+def analysis_live():
+    predicted_aqi = None
+    city = state = country = None
+    if request.method == 'POST':
+        city = request.form.get('city')
+        state = request.form.get('state')
+        country = request.form.get('country')
+        if city and state and country:
+            try:
+                live_df = api_fetcher.fetch_live_aqi(city, state, country)
+                df_proc = data_preprocessing.preprocess_data(live_df)
+                features = ['PM2.5','PM10','NO','NO2','NOx','NH3','CO','SO2','O3','Benzene','Toluene','Xylene']
+                for col in features:
+                    if col not in df_proc.columns:
+                        df_proc[col] = 0
+                X_live = df_proc[features]
+                predicted_aqi = rf_model.predict(X_live)[0]
+            except Exception as e:
+                flash(f"Error fetching or processing live data: {str(e)}")
+    return render_template('analysis_live.html', city=city, predicted_aqi=predicted_aqi)
 
-    return render_template('live.html', plot_path=plot_path)
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)

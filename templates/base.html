@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Air Quality Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('home') }}">Home</a></li>
+            <li><a href="{{ url_for('about') }}">About</a></li>
+            <li><a href="{{ url_for('contact') }}">Contact</a></li>
+            <li>
+                Analysis
+                <ul>
+                    <li><a href="{{ url_for('analysis_predefined') }}">Predefined Dataset</a></li>
+                    <li><a href="{{ url_for('analysis_upload') }}">Upload Dataset</a></li>
+                    <li><a href="{{ url_for('analysis_live') }}">Live Dataset</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
