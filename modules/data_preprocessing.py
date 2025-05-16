@@ -3,14 +3,6 @@ from sklearn.preprocessing import StandardScaler
 
 def load_data(file_path):
     df = pd.read_csv(file_path)
-    print('/n EDA Report /n')
-    print(df.shape)           # Rows & columns
-    print(df.columns)         # Column names
-    print(df.info())
-    print("Missing values:\n", df.isnull().sum())  # Check for missing values
-    print("Data types:\n", df.dtypes)  # Check data types
-    print("Unique values:\n", df.nunique())  # Check unique values in each column
-
     return df
 
 def preprocess_data(df):

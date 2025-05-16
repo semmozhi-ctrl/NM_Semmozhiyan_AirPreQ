@@ -1,11 +1,15 @@
 import requests
 import pandas as pd
 
-# Replace YOUR_API_KEY with your actual IQAir API key
-API_KEY = "2f686378-e430-48ed-8b8c-8c13304a8b50"
+import os
+import requests
+
+API_KEY = os.getenv("AIRVISUAL_API_KEY")
+
+
 
 def fetch_live_aqi(city, state, country):
-    url = "https://api.airvisual.com/v2/city"
+    url = f"http://api.airvisual.com/v2/city?city=Coimbatore&state=Tamil Nadu&country=India&key={API_KEY}"
     params = {
         "city": city,
         "state": state,

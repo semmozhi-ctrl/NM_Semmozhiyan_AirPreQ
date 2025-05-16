@@ -13,6 +13,5 @@ def train_models(df):
 
     rf_model = RandomForestRegressor(n_estimators=100, random_state=42)
     rf_model.fit(X_train, y_train)
-    print("Models trained successfully.")
-    print(lr_model.score(X_test, y_test))
+    
     return lr_model, rf_model, X_test, y_test
