@@ -43,7 +43,6 @@ def analysis_predefined():
                            aq_trend_json=aq_trend_json,
                            feat_imp_json=feat_imp_json)
 
-
 @app.route('/analysis/upload', methods=['GET', 'POST'])
 def analysis_upload():
     if request.method == 'POST':
@@ -61,6 +60,7 @@ def analysis_upload():
             rmse_lr, r2_lr = model_evaluation.evaluate_model(lr, X_test_up, y_test_up)
             rmse_rf, r2_rf = model_evaluation.evaluate_model(rf, X_test_up, y_test_up)
 
+            # Generate plots for uploaded dataset
             corr_fig = visualizations.correlation_heatmap(df_proc)
             aq_trend_fig = visualizations.aqi_trend(df_proc)
             feat_imp_fig = visualizations.feature_importance(rf, df_proc)
@@ -82,6 +82,7 @@ def analysis_upload():
 def analysis_live():
     predicted_aqi = None
     city = state = country = None
+    corr_json = aq_trend_json = feat_imp_json = None
     if request.method == 'POST':
         city = request.form.get('city')
         state = request.form.get('state')
@@ -90,15 +91,29 @@ def analysis_live():
             try:
                 live_df = api_fetcher.fetch_live_aqi(city, state, country)
                 df_proc = data_preprocessing.preprocess_data(live_df)
+
+                # Model prediction
                 features = ['PM2.5','PM10','NO','NO2','NOx','NH3','CO','SO2','O3','Benzene','Toluene','Xylene']
                 for col in features:
                     if col not in df_proc.columns:
                         df_proc[col] = 0
                 X_live = df_proc[features]
                 predicted_aqi = rf_model.predict(X_live)[0]
+
+                # Generate simple visualizations for live data (even if single row)
+                corr_fig = visualizations.correlation_heatmap(df_proc)
+                aq_trend_fig = visualizations.aqi_trend(df_proc)
+                feat_imp_fig = visualizations.feature_importance(rf_model, df_proc)
+
+                corr_json = corr_fig.to_json()
+                aq_trend_json = aq_trend_fig.to_json()
+                feat_imp_json = feat_imp_fig.to_json()
             except Exception as e:
                 flash(f"Error fetching or processing live data: {str(e)}")
-    return render_template('analysis_live.html', city=city, predicted_aqi=predicted_aqi)
+
+    return render_template('analysis_live.html',
+                           city=city, predicted_aqi=predicted_aqi,
+                           corr_json=corr_json, aq_trend_json=aq_trend_json, feat_imp_json=feat_imp_json)
 
 if __name__ == "__main__":
     app.run(debug=True)
