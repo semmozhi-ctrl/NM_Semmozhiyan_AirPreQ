@@ -4,12 +4,12 @@ import pandas as pd
 import os
 import requests
 
-API_KEY = os.getenv("AIRVISUAL_API_KEY")
+API_KEY = "2f686378-e430-48ed-8b8c-8c13304a8b50"  # Replace with your actual API key
 
 
 
 def fetch_live_aqi(city, state, country):
-    url = f"http://api.airvisual.com/v2/city?city=Coimbatore&state=Tamil Nadu&country=India&key={API_KEY}"
+    url = "https://api.airvisual.com/v2/city"
     params = {
         "city": city,
         "state": state,
