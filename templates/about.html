@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  .team-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+  }
+  .team-row > div {
+    flex: 0 1 280px;
+  }
+  .social-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e60000; /* bright red */
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+    font-size: 20px;
+  }
+  .social-icon:hover {
+    background-color: #a30000; /* darker red on hover */
+    color: white;
+  }
+  .email-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e60000; /* same bright red */
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 18px;
+    text-decoration: none;
+  }
+</style>
+
+<!-- Ensure Font Awesome CSS is linked in base.html head:
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+-->
+
+<div class="card shadow-sm p-4">
+  <h1 class="text-primary">About Us</h1>
+
+  <h3 class="mt-4">🧠 Purpose</h3>
+  <p>
+    The rise in air pollution across urban and rural areas poses a serious threat to public health and the environment.
+    This project aims to provide a predictive platform that empowers people with actionable insights into current and future air quality conditions.
+  </p>
+
+  <h3 class="mt-4">🛠️ How It Works</h3>
+  <p>
+    Our system uses historical pollutant data and real-time environmental inputs to train machine learning models that can predict AQI levels.
+    Users can upload custom datasets, explore live predictions, and analyze visual insights such as correlation heatmaps, AQI trends, and feature importance graphs.
+  </p>
+
+  <h3 class="mt-4">🧪 Technology Stack</h3>
+  <ul>
+    <li><strong>Frontend:</strong> HTML, CSS, Bootstrap 5, JavaScript, Plotly</li>
+    <li><strong>Backend:</strong> Python, Flask</li>
+    <li><strong>Machine Learning:</strong> scikit-learn</li>
+    <li><strong>Live Data:</strong> IQAir AirVisual API</li>
+  </ul>
+
+  <h3 class="mt-4">🌏 Who Can Use This?</h3>
+  <p>
+    This platform is ideal for students, environmental researchers, government officials, and everyday citizens who want to monitor air quality
+    and take preventive measures to safeguard health.
+  </p>
+
+  <h3 class="mt-5">👨‍💻 Project Team</h3>
+  <div class="team-row mt-2">
+    <!-- Sivabalan V -->
+    <div class="card h-100 p-3 text-center">
+      <img src="{{ url_for('static', filename='images/sivabalan.jpg') }}" alt="Sivabalan V" class="rounded-circle mx-auto d-block" style="width:120px; height:120px; object-fit: cover;">
+      <h5 class="card-title mt-3">Sivabalan V</h5>
+      <p class="mb-1">Project Manager</p>
+      <p class="mb-1">Quality Assurance (QA) Engineer</p>
+      <p class="d-flex justify-content-center align-items-center gap-3 mb-2">
+        
+        <a href="https://www.linkedin.com/in/sivabalan51103?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+        <a href="https://github.com/Siva-Balan-V" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="GitHub">
+          <i class="fab fa-github"></i>
+        </a>
+        <a href="https://www.instagram.com/_pr_ince.?igsh=cDM5bzJ6cG9xMnRi" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram">
+          <i class="fab fa-instagram"></i>
+        </a>
+      </p>
+    </div>
+
+    <!-- Dhyanesh V -->
+    <div class="card h-100 p-3 text-center">
+      <img src="{{ url_for('static', filename='images/dhyanesh.jpg') }}" alt="Dhyanesh V" class="rounded-circle mx-auto d-block" style="width:120px; height:120px; object-fit: cover;">
+      <h5 class="card-title mt-3">Dhyanesh V</h5>
+      <p class="mb-1">Backend & Deployment Developer</p>
+      <p class="d-flex justify-content-center align-items-center gap-3 mb-2">
+        
+        <a href="https://www.linkedin.com/in/dhyanesh-v-741738274?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+        <a href="https://github.com/Dhyanesh006" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="GitHub">
+          <i class="fab fa-github"></i>
+        </a>
+        <a href="https://www.instagram.com/dhyanesh__006?igsh=ZG1icW16ZnJlenJp&utm_source=qr" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram">
+          <i class="fab fa-instagram"></i>
+        </a>
+      </p>
+    </div>
+
+    <!-- Semmozhiyan NS -->
+    <div class="card h-100 p-3 text-center">
+      <img src="{{ url_for('static', filename='images/semmozhiyan.jpg') }}" alt="Semmozhiyan NS" class="rounded-circle mx-auto d-block" style="width:120px; height:120px; object-fit: cover;">
+      <h5 class="card-title mt-3">Semmozhiyan NS</h5>
+      <p class="mb-1">Machine Learning Engineer</p>
+      <p class="d-flex justify-content-center align-items-center gap-3 mb-2">
+        
+        <a href="https://www.linkedin.com/in/semmozhiyan-n-s-aa7478296?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+        <a href="https://github.com/semmozhi-ctrl" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="GitHub">
+          <i class="fab fa-github"></i>
+        </a>
+        <a href="https://www.instagram.com/calm_edge?igsh=MWN6aWpscTR0NWV0MA==" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram">
+          <i class="fab fa-instagram"></i>
+        </a>
+      </p>
+    </div>
+
+    <!-- Sri Sabarish U -->
+    <div class="card h-100 p-3 text-center">
+      <img src="{{ url_for('static', filename='images/sabarish.jpg') }}" alt="Sri Sabarish U" class="rounded-circle mx-auto d-block" style="width:120px; height:120px; object-fit: cover;">
+      <h5 class="card-title mt-3">Sri Sabarish U</h5>
+      <p class="mb-1">Data Collection & Preprocessing Lead</p>
+      <p class="d-flex justify-content-center align-items-center gap-3 mb-2">
+        
+        <a href="https://www.linkedin.com/in/sri-sabarish-8b35a0293?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+        <a href="https://github.com/srisabarish06" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="GitHub">
+          <i class="fab fa-github"></i>
+        </a>
+        <a href="https://www.instagram.com/sri_sabarish_19?igsh=ZTNuOXB0czI3N253" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram">
+          <i class="fab fa-instagram"></i>
+        </a>
+      </p>
+    </div>
+
+    <!-- Chandru M -->
+    <div class="card h-100 p-3 text-center">
+      <img src="{{ url_for('static', filename='images/chandru.jpg') }}" alt="Chandru M" class="rounded-circle mx-auto d-block" style="width:120px; height:120px; object-fit: cover;">
+      <h5 class="card-title mt-3">Chandru M</h5>
+      <p class="mb-1">UI/UX Designer</p>
+      <p class="mb-1">Documentation Lead</p>
+      <p class="d-flex justify-content-center align-items-center gap-3 mb-2">
+        
+        <a href="https://www.linkedin.com/in/chandru-m-585b35335?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+        <a href="https://github.com/chandru2110" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="GitHub">
+          <i class="fab fa-github"></i>
+        </a>
+        <a href="https://www.instagram.com/chandru_.03?igsh=Nnk5eGlyMHFleTRy" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram">
+          <i class="fab fa-instagram"></i>
+        </a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

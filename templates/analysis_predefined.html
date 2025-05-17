@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h1>Analysis: Predefined Dataset</h1>
+
+    <h3>Correlation Heatmap</h3>
+    <div id="corr_heatmap"></div>
+
+    <h3>AQI Trend Over Time</h3>
+    <div id="aqi_trend"></div>
+
+    <h3>Feature Importance</h3>
+    <div id="feature_importance"></div>
+
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        var corrData = {{ corr_json|safe }};
+        var aqiTrendData = {{ aq_trend_json|safe }};
+        var featImpData = {{ feat_imp_json|safe }};
+
+        Plotly.newPlot('corr_heatmap', corrData.data, corrData.layout);
+        Plotly.newPlot('aqi_trend', aqiTrendData.data, aqiTrendData.layout);
+        Plotly.newPlot('feature_importance', featImpData.data, featImpData.layout);
+    </script>
+</div>
+{% endblock %}

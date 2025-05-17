@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h1>Live AQI Prediction</h1>
+    <form method="post" class="mb-4">
+        <div class="mb-3">
+            <label class="form-label">City</label>
+            <input type="text" name="city" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">State</label>
+            <input type="text" name="state" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Country</label>
+            <input type="text" name="country" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Get Live AQI Prediction</button>
+    </form>
+
+    {% if predicted_aqi is not none %}
+        <div class="alert alert-success">
+            <h4>Predicted AQI for {{ city }}: {{ predicted_aqi | round(2) }}</h4>
+        </div>
+    {% endif %}
+
+    {% if corr_json %}
+        <h3>Correlation Heatmap</h3>
+        <div id="corr_heatmap"></div>
+        <h3>AQI Trend</h3>
+        <div id="aqi_trend"></div>
+        <h3>Feature Importance</h3>
+        <div id="feature_importance"></div>
+
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+        <script>
+            var corrData = {{ corr_json|safe }};
+            var aqiTrendData = {{ aq_trend_json|safe }};
+            var featImpData = {{ feat_imp_json|safe }};
+
+            Plotly.newPlot('corr_heatmap', corrData.data, corrData.layout);
+            Plotly.newPlot('aqi_trend', aqiTrendData.data, aqiTrendData.layout);
+            Plotly.newPlot('feature_importance', featImpData.data, featImpData.layout);
+        </script>
+    {% endif %}
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="alert alert-danger mt-3">
+        {% for message in messages %}
+          <p>{{ message }}</p>
+        {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+</div>
+{% endblock %}

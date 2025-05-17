@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h1>Upload Dataset for Analysis</h1>
+    <form method="post" enctype="multipart/form-data" class="mb-4">
+        <div class="mb-3">
+            <label for="file" class="form-label">Choose a CSV file</label>
+            <input type="file" name="file" accept=".csv" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-success">Upload & Analyze</button>
+    </form>
+
+    {% if rmse_lr %}
+        <h3>Linear Regression Results</h3>
+        <ul>
+            <li><strong>RMSE:</strong> {{ rmse_lr }}</li>
+            <li><strong>R²:</strong> {{ r2_lr }}</li>
+        </ul>
+    {% endif %}
+
+    {% if rmse_rf %}
+        <h3>Random Forest Results</h3>
+        <ul>
+            <li><strong>RMSE:</strong> {{ rmse_rf }}</li>
+            <li><strong>R²:</strong> {{ r2_rf }}</li>
+        </ul>
+    {% endif %}
+
+    {% if corr_json %}
+        <h3>Correlation Heatmap</h3>
+        <div id="corr_heatmap"></div>
+        <h3>AQI Trend</h3>
+        <div id="aqi_trend"></div>
+        <h3>Feature Importance</h3>
+        <div id="feature_importance"></div>
+
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+        <script>
+            var corrData = {{ corr_json|safe }};
+            var aqiTrendData = {{ aq_trend_json|safe }};
+            var featImpData = {{ feat_imp_json|safe }};
+
+            Plotly.newPlot('corr_heatmap', corrData.data, corrData.layout);
+            Plotly.newPlot('aqi_trend', aqiTrendData.data, aqiTrendData.layout);
+            Plotly.newPlot('feature_importance', featImpData.data, featImpData.layout);
+        </script>
+    {% endif %}
+</div>
+{% endblock %}

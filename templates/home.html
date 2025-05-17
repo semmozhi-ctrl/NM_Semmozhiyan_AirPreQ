@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card shadow-sm p-4">
+    <div class="text-center mb-4">
+        <h1 class="text-primary">Air Quality Prediction System</h1>
+        <p class="lead">Stay informed. Breathe safer. Live better.</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <h3>📊 What does this app do?</h3>
+            <p>
+                This platform predicts the Air Quality Index (AQI) of any city using historical and real-time pollutant data. 
+                It uses machine learning models to analyze air pollution levels and helps users understand and visualize current air quality trends.
+            </p>
+        </div>
+        <div class="col-md-6">
+            <h3>🔍 Features</h3>
+            <ul>
+                <li>📁 Analyze predefined or custom uploaded datasets</li>
+                <li>🌐 Live AQI prediction using real-time data (via API)</li>
+                <li>📈 Visual insights like heatmaps, trends, and feature importance</li>
+                <li>⚙️ Modular design for easy updates and ML experimentation</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="mt-5 text-center">
+        <a href="{{ url_for('analysis_live') }}" class="btn btn-primary btn-lg">Try Live AQI Prediction →</a>
+    </div>
+</div>
+{% endblock %}
+
