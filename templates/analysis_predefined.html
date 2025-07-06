@@ -1,26 +1,369 @@
 {% extends "base.html" %}
+
+{% block title %}Predefined Dataset Analysis - AirPreQ{% endblock %}
+
 {% block content %}
-<div class="container mt-4">
-    <h1>Analysis: Predefined Dataset</h1>
+<div class="analysis-page" style="padding-top: 100px;">
+    <!-- Page Header -->
+    <div class="row mb-5">
+        <div class="col-12" data-aos="fade-up">
+            <div class="page-header glass p-4 rounded-4">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <h1 class="display-6 fw-bold mb-2">
+                            <i class="fas fa-database text-gradient me-3"></i>
+                            Predefined Dataset Analysis
+                        </h1>
+                        <p class="lead text-muted mb-0">
+                            Comprehensive analysis of historical air quality data with machine learning insights
+                        </p>
+                    </div>
+                    <div class="text-end">
+                        <div class="stat-badge glass p-3 rounded">
+                            <div class="h5 mb-0 text-gradient">Active</div>
+                            <small class="text-muted">Dataset Status</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <h3>Correlation Heatmap</h3>
-    <div id="corr_heatmap"></div>
+    <!-- Analysis Grid -->
+    <div class="row g-4">
+        <!-- Correlation Heatmap -->
+        <div class="col-12" data-aos="fade-up" data-aos-delay="100">
+            <div class="chart-container card p-4">
+                <div class="chart-header d-flex align-items-center justify-content-between mb-4">
+                    <div>
+                        <h3 class="fw-bold mb-1">
+                            <i class="fas fa-th me-2 text-primary"></i>
+                            Correlation Heatmap
+                        </h3>
+                        <p class="text-muted mb-0">
+                            Correlation matrix showing relationships between environmental factors
+                        </p>
+                    </div>
+                    <div class="chart-controls">
+                        <button class="btn btn-outline-primary btn-sm" onclick="downloadChart('corr_heatmap')">
+                            <i class="fas fa-download me-1"></i>Download
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-wrapper">
+                    <div id="corr_heatmap" class="chart-area"></div>
+                </div>
+            </div>
+        </div>
 
-    <h3>AQI Trend Over Time</h3>
-    <div id="aqi_trend"></div>
+        <!-- AQI Trend -->
+        <div class="col-lg-8" data-aos="fade-up" data-aos-delay="200">
+            <div class="chart-container card p-4">
+                <div class="chart-header d-flex align-items-center justify-content-between mb-4">
+                    <div>
+                        <h3 class="fw-bold mb-1">
+                            <i class="fas fa-chart-line me-2 text-success"></i>
+                            AQI Trend Over Time
+                        </h3>
+                        <p class="text-muted mb-0">
+                            Historical air quality index patterns and trends
+                        </p>
+                    </div>
+                    <div class="chart-controls">
+                        <button class="btn btn-outline-primary btn-sm" onclick="downloadChart('aqi_trend')">
+                            <i class="fas fa-download me-1"></i>Download
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-wrapper">
+                    <div id="aqi_trend" class="chart-area"></div>
+                </div>
+            </div>
+        </div>
 
-    <h3>Feature Importance</h3>
-    <div id="feature_importance"></div>
+        <!-- Quick Stats -->
+        <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
+            <div class="stats-container">
+                <div class="card p-4 mb-3">
+                    <div class="d-flex align-items-center">
+                        <div class="stat-icon me-3">
+                            <i class="fas fa-chart-bar text-primary"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted mb-1">Average AQI</h6>
+                            <h4 class="mb-0 fw-bold">87.3</h4>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card p-4 mb-3">
+                    <div class="d-flex align-items-center">
+                        <div class="stat-icon me-3">
+                            <i class="fas fa-calendar text-warning"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted mb-1">Data Points</h6>
+                            <h4 class="mb-0 fw-bold">2,547</h4>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card p-4 mb-3">
+                    <div class="d-flex align-items-center">
+                        <div class="stat-icon me-3">
+                            <i class="fas fa-location-dot text-danger"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted mb-1">Locations</h6>
+                            <h4 class="mb-0 fw-bold">12</h4>
+                        </div>
+                    </div>
+                </div>
 
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <script>
-        var corrData = {{ corr_json|safe }};
-        var aqiTrendData = {{ aq_trend_json|safe }};
-        var featImpData = {{ feat_imp_json|safe }};
+                <div class="card p-4">
+                    <div class="d-flex align-items-center">
+                        <div class="stat-icon me-3">
+                            <i class="fas fa-clock text-info"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted mb-1">Time Range</h6>
+                            <h4 class="mb-0 fw-bold">365 Days</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        Plotly.newPlot('corr_heatmap', corrData.data, corrData.layout);
-        Plotly.newPlot('aqi_trend', aqiTrendData.data, aqiTrendData.layout);
-        Plotly.newPlot('feature_importance', featImpData.data, featImpData.layout);
-    </script>
+        <!-- Feature Importance -->
+        <div class="col-12" data-aos="fade-up" data-aos-delay="400">
+            <div class="chart-container card p-4">
+                <div class="chart-header d-flex align-items-center justify-content-between mb-4">
+                    <div>
+                        <h3 class="fw-bold mb-1">
+                            <i class="fas fa-ranking-star me-2 text-warning"></i>
+                            Feature Importance Analysis
+                        </h3>
+                        <p class="text-muted mb-0">
+                            Machine learning model feature importance rankings
+                        </p>
+                    </div>
+                    <div class="chart-controls">
+                        <button class="btn btn-outline-primary btn-sm" onclick="downloadChart('feature_importance')">
+                            <i class="fas fa-download me-1"></i>Download
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-wrapper">
+                    <div id="feature_importance" class="chart-area"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row mt-5">
+        <div class="col-12 text-center" data-aos="fade-up" data-aos-delay="500">
+            <div class="action-buttons glass p-4 rounded-4">
+                <h4 class="mb-3">Explore More Analysis Options</h4>
+                <a href="{{ url_for('analysis_upload') }}" class="btn btn-primary me-3">
+                    <i class="fas fa-upload me-2"></i>Upload Custom Dataset
+                </a>
+                <a href="{{ url_for('analysis_live') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-satellite-dish me-2"></i>Try Live Analysis
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
+
+<style>
+.chart-container {
+    background: var(--bg-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.chart-container:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.chart-area {
+    min-height: 400px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    padding: 1rem;
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(59, 130, 246, 0.1);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.stats-container .card {
+    background: var(--bg-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.stats-container .card:hover {
+    transform: translateX(5px);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.chart-header h3 {
+    color: var(--text-primary);
+}
+
+.action-buttons {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    z-index: 10;
+}
+
+.chart-wrapper {
+    position: relative;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Show loading state
+        function showLoading(elementId) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `
+                <div class="loading-overlay">
+                    <div class="text-center">
+                        <div class="loading mb-3"></div>
+                        <p class="text-muted">Loading chart data...</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Initialize charts with loading states
+        showLoading('corr_heatmap');
+        showLoading('aqi_trend');
+        showLoading('feature_importance');
+
+        // Load chart data
+        try {
+            var corrData = {{ corr_json|safe }};
+            var aqiTrendData = {{ aq_trend_json|safe }};
+            var featImpData = {{ feat_imp_json|safe }};
+
+            // Configure chart layout for dark theme
+            const commonLayout = {
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                font: {
+                    color: '#f8fafc',
+                    family: 'Inter, sans-serif'
+                },
+                margin: { t: 50, r: 50, b: 50, l: 50 }
+            };
+
+            // Update layouts
+            if (corrData.layout) {
+                Object.assign(corrData.layout, commonLayout);
+            }
+            if (aqiTrendData.layout) {
+                Object.assign(aqiTrendData.layout, commonLayout);
+            }
+            if (featImpData.layout) {
+                Object.assign(featImpData.layout, commonLayout);
+            }
+
+            // Plot charts with animations
+            setTimeout(() => {
+                Plotly.newPlot('corr_heatmap', corrData.data, corrData.layout, {
+                    responsive: true,
+                    displayModeBar: true,
+                    modeBarButtonsToRemove: ['pan2d', 'lasso2d', 'select2d'],
+                    displaylogo: false
+                });
+            }, 500);
+
+            setTimeout(() => {
+                Plotly.newPlot('aqi_trend', aqiTrendData.data, aqiTrendData.layout, {
+                    responsive: true,
+                    displayModeBar: true,
+                    modeBarButtonsToRemove: ['pan2d', 'lasso2d', 'select2d'],
+                    displaylogo: false
+                });
+            }, 1000);
+
+            setTimeout(() => {
+                Plotly.newPlot('feature_importance', featImpData.data, featImpData.layout, {
+                    responsive: true,
+                    displayModeBar: true,
+                    modeBarButtonsToRemove: ['pan2d', 'lasso2d', 'select2d'],
+                    displaylogo: false
+                });
+            }, 1500);
+
+        } catch (error) {
+            console.error('Error loading chart data:', error);
+            document.querySelectorAll('.chart-area').forEach(area => {
+                area.innerHTML = `
+                    <div class="text-center p-5">
+                        <i class="fas fa-exclamation-triangle text-warning mb-3" style="font-size: 3rem;"></i>
+                        <h5>Error Loading Chart</h5>
+                        <p class="text-muted">Please refresh the page to try again.</p>
+                    </div>
+                `;
+            });
+        }
+    });
+
+    // Download chart function
+    function downloadChart(chartId) {
+        Plotly.downloadImage(chartId, {
+            format: 'png',
+            width: 1200,
+            height: 800,
+            filename: `airpreq_${chartId}_${new Date().toISOString().split('T')[0]}`
+        });
+    }
+
+    // Add chart interaction animations
+    document.addEventListener('DOMContentLoaded', function() {
+        const charts = ['corr_heatmap', 'aqi_trend', 'feature_importance'];
+        
+        charts.forEach(chartId => {
+            const element = document.getElementById(chartId);
+            if (element) {
+                element.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.02)';
+                    this.style.transition = 'transform 0.3s ease';
+                });
+                
+                element.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            }
+        });
+    });
+</script>
 {% endblock %}

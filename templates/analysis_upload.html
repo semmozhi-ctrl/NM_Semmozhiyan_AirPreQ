@@ -1,49 +1,595 @@
 {% extends "base.html" %}
+
+{% block title %}Upload Dataset - AirPreQ{% endblock %}
+
 {% block content %}
-<div class="container mt-4">
-    <h1>Upload Dataset for Analysis</h1>
-    <form method="post" enctype="multipart/form-data" class="mb-4">
-        <div class="mb-3">
-            <label for="file" class="form-label">Choose a CSV file</label>
-            <input type="file" name="file" accept=".csv" class="form-control" required>
+<div class="upload-page" style="padding-top: 100px;">
+    <!-- Page Header -->
+    <div class="row mb-5">
+        <div class="col-12" data-aos="fade-up">
+            <div class="page-header glass p-4 rounded-4">
+                <div class="text-center">
+                    <h1 class="display-6 fw-bold mb-2">
+                        <i class="fas fa-upload text-gradient me-3"></i>
+                        Upload Your Dataset
+                    </h1>
+                    <p class="lead text-muted mb-0">
+                        Analyze your custom air quality data with our advanced machine learning models
+                    </p>
+                </div>
+            </div>
         </div>
-        <button type="submit" class="btn btn-success">Upload & Analyze</button>
-    </form>
+    </div>
 
-    {% if rmse_lr %}
-        <h3>Linear Regression Results</h3>
-        <ul>
-            <li><strong>RMSE:</strong> {{ rmse_lr }}</li>
-            <li><strong>R²:</strong> {{ r2_lr }}</li>
-        </ul>
-    {% endif %}
+    {% if not corr_json %}
+    <!-- Upload Section -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-8" data-aos="fade-up" data-aos-delay="100">
+            <div class="upload-container card p-5">
+                <form method="post" enctype="multipart/form-data" id="uploadForm">
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-content text-center">
+                            <div class="upload-icon mb-3">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                            </div>
+                            <h4 class="fw-bold mb-2">Drag & Drop Your CSV File</h4>
+                            <p class="text-muted mb-3">or click to browse your files</p>
+                            <input type="file" name="file" accept=".csv" class="file-input" id="fileInput" required>
+                            <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('fileInput').click()">
+                                <i class="fas fa-folder-open me-2"></i>Choose File
+                            </button>
+                        </div>
+                        <div class="file-preview" id="filePreview" style="display: none;">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-file-csv text-success me-3" style="font-size: 2rem;"></i>
+                                    <div>
+                                        <h6 class="mb-0" id="fileName"></h6>
+                                        <small class="text-muted" id="fileSize"></small>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeFile()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="upload-actions text-center mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg" id="uploadBtn" disabled>
+                            <i class="fas fa-rocket me-2"></i>Upload & Analyze
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Requirements -->
+                <div class="upload-requirements mt-4">
+                    <h6 class="fw-bold mb-2">
+                        <i class="fas fa-info-circle text-info me-2"></i>File Requirements
+                    </h6>
+                    <ul class="requirement-list">
+                        <li><i class="fas fa-check text-success me-2"></i>CSV format only</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Maximum file size: 10MB</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Must contain air quality related columns</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Include target variable (AQI)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    {% if rmse_rf %}
-        <h3>Random Forest Results</h3>
-        <ul>
-            <li><strong>RMSE:</strong> {{ rmse_rf }}</li>
-            <li><strong>R²:</strong> {{ r2_rf }}</li>
-        </ul>
+    <!-- Sample Data Info -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-8" data-aos="fade-up" data-aos-delay="200">
+            <div class="info-card card p-4">
+                <h5 class="fw-bold mb-3">
+                    <i class="fas fa-lightbulb text-warning me-2"></i>
+                    Expected Data Format
+                </h5>
+                <p class="text-muted mb-3">
+                    Your CSV file should contain columns similar to our sample dataset for best results:
+                </p>
+                <div class="table-responsive">
+                    <table class="table table-dark table-striped">
+                        <thead>
+                            <tr>
+                                <th>Column Name</th>
+                                <th>Description</th>
+                                <th>Example</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>PM2.5</td>
+                                <td>Particulate Matter 2.5</td>
+                                <td>35.2</td>
+                            </tr>
+                            <tr>
+                                <td>PM10</td>
+                                <td>Particulate Matter 10</td>
+                                <td>85.1</td>
+                            </tr>
+                            <tr>
+                                <td>NO2</td>
+                                <td>Nitrogen Dioxide</td>
+                                <td>45.3</td>
+                            </tr>
+                            <tr>
+                                <td>CO</td>
+                                <td>Carbon Monoxide</td>
+                                <td>1.2</td>
+                            </tr>
+                            <tr>
+                                <td>AQI</td>
+                                <td>Air Quality Index (Target)</td>
+                                <td>87</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
     {% endif %}
 
     {% if corr_json %}
-        <h3>Correlation Heatmap</h3>
-        <div id="corr_heatmap"></div>
-        <h3>AQI Trend</h3>
-        <div id="aqi_trend"></div>
-        <h3>Feature Importance</h3>
-        <div id="feature_importance"></div>
+    <!-- Results Section -->
+    <div class="results-section">
+        <!-- Model Performance -->
+        <div class="row mb-5">
+            <div class="col-12" data-aos="fade-up">
+                <div class="performance-header glass p-4 rounded-4">
+                    <h2 class="display-6 fw-bold mb-3 text-center">
+                        <i class="fas fa-chart-bar text-gradient me-3"></i>
+                        Analysis Results
+                    </h2>
+                    <p class="lead text-muted text-center mb-0">
+                        Your dataset has been successfully analyzed with our machine learning models
+                    </p>
+                </div>
+            </div>
+        </div>
 
-        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-        <script>
-            var corrData = {{ corr_json|safe }};
-            var aqiTrendData = {{ aq_trend_json|safe }};
-            var featImpData = {{ feat_imp_json|safe }};
+        <!-- Model Metrics -->
+        <div class="row g-4 mb-5">
+            {% if rmse_lr %}
+            <div class="col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="metric-card card p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="metric-icon me-3">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-0">Linear Regression</h5>
+                            <small class="text-muted">Simple & Interpretable</small>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="metric-item">
+                                <div class="metric-value">{{ "%.3f"|format(rmse_lr) }}</div>
+                                <div class="metric-label">RMSE</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="metric-item">
+                                <div class="metric-value">{{ "%.3f"|format(r2_lr) }}</div>
+                                <div class="metric-label">R² Score</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
 
-            Plotly.newPlot('corr_heatmap', corrData.data, corrData.layout);
-            Plotly.newPlot('aqi_trend', aqiTrendData.data, aqiTrendData.layout);
-            Plotly.newPlot('feature_importance', featImpData.data, featImpData.layout);
-        </script>
+            {% if rmse_rf %}
+            <div class="col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="metric-card card p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="metric-icon me-3">
+                            <i class="fas fa-tree"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-0">Random Forest</h5>
+                            <small class="text-muted">Ensemble & Robust</small>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="metric-item">
+                                <div class="metric-value">{{ "%.3f"|format(rmse_rf) }}</div>
+                                <div class="metric-label">RMSE</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="metric-item">
+                                <div class="metric-value">{{ "%.3f"|format(r2_rf) }}</div>
+                                <div class="metric-label">R² Score</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Charts -->
+        <div class="row g-4">
+            <!-- Correlation Heatmap -->
+            <div class="col-12" data-aos="fade-up" data-aos-delay="300">
+                <div class="chart-container card p-4">
+                    <div class="chart-header d-flex align-items-center justify-content-between mb-4">
+                        <div>
+                            <h3 class="fw-bold mb-1">
+                                <i class="fas fa-th me-2 text-primary"></i>
+                                Correlation Heatmap
+                            </h3>
+                            <p class="text-muted mb-0">
+                                Correlation matrix of your uploaded dataset
+                            </p>
+                        </div>
+                        <button class="btn btn-outline-primary btn-sm" onclick="downloadChart('corr_heatmap')">
+                            <i class="fas fa-download me-1"></i>Download
+                        </button>
+                    </div>
+                    <div class="chart-wrapper">
+                        <div id="corr_heatmap" class="chart-area"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AQI Trend -->
+            <div class="col-lg-8" data-aos="fade-up" data-aos-delay="400">
+                <div class="chart-container card p-4">
+                    <div class="chart-header d-flex align-items-center justify-content-between mb-4">
+                        <div>
+                            <h3 class="fw-bold mb-1">
+                                <i class="fas fa-chart-line me-2 text-success"></i>
+                                AQI Trend Analysis
+                            </h3>
+                            <p class="text-muted mb-0">
+                                Air quality patterns in your dataset
+                            </p>
+                        </div>
+                        <button class="btn btn-outline-primary btn-sm" onclick="downloadChart('aqi_trend')">
+                            <i class="fas fa-download me-1"></i>Download
+                        </button>
+                    </div>
+                    <div class="chart-wrapper">
+                        <div id="aqi_trend" class="chart-area"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="col-lg-4" data-aos="fade-up" data-aos-delay="500">
+                <div class="actions-container">
+                    <div class="card p-4 mb-3">
+                        <h6 class="fw-bold mb-3">Quick Actions</h6>
+                        <a href="{{ url_for('analysis_upload') }}" class="btn btn-outline-primary w-100 mb-2">
+                            <i class="fas fa-upload me-2"></i>Upload New Dataset
+                        </a>
+                        <a href="{{ url_for('analysis_predefined') }}" class="btn btn-outline-secondary w-100 mb-2">
+                            <i class="fas fa-database me-2"></i>Try Predefined Data
+                        </a>
+                        <a href="{{ url_for('analysis_live') }}" class="btn btn-outline-success w-100">
+                            <i class="fas fa-satellite-dish me-2"></i>Live Analysis
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature Importance -->
+            <div class="col-12" data-aos="fade-up" data-aos-delay="600">
+                <div class="chart-container card p-4">
+                    <div class="chart-header d-flex align-items-center justify-content-between mb-4">
+                        <div>
+                            <h3 class="fw-bold mb-1">
+                                <i class="fas fa-ranking-star me-2 text-warning"></i>
+                                Feature Importance
+                            </h3>
+                            <p class="text-muted mb-0">
+                                Most influential factors in your dataset
+                            </p>
+                        </div>
+                        <button class="btn btn-outline-primary btn-sm" onclick="downloadChart('feature_importance')">
+                            <i class="fas fa-download me-1"></i>Download
+                        </button>
+                    </div>
+                    <div class="chart-wrapper">
+                        <div id="feature_importance" class="chart-area"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     {% endif %}
 </div>
+
+<style>
+.upload-container {
+    background: var(--bg-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.upload-area {
+    border: 3px dashed rgba(59, 130, 246, 0.3);
+    border-radius: 16px;
+    padding: 3rem 2rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.upload-area:hover {
+    border-color: rgba(59, 130, 246, 0.6);
+    background: rgba(59, 130, 246, 0.05);
+}
+
+.upload-area.dragover {
+    border-color: var(--accent-blue);
+    background: rgba(59, 130, 246, 0.1);
+    transform: scale(1.02);
+}
+
+.upload-icon {
+    font-size: 4rem;
+    color: var(--accent-blue);
+    margin-bottom: 1rem;
+}
+
+.file-input {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.file-preview {
+    padding: 1.5rem;
+    background: rgba(59, 130, 246, 0.1);
+    border-radius: 12px;
+    border: 2px solid rgba(59, 130, 246, 0.3);
+}
+
+.requirement-list {
+    list-style: none;
+    padding: 0;
+}
+
+.requirement-list li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.requirement-list li:last-child {
+    border-bottom: none;
+}
+
+.metric-card {
+    background: var(--bg-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.metric-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--primary-gradient);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+}
+
+.metric-item {
+    text-align: center;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+.metric-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.metric-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.chart-container {
+    background: var(--bg-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.chart-container:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.chart-area {
+    min-height: 400px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    padding: 1rem;
+}
+
+.info-card {
+    background: var(--bg-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.table-dark {
+    background: var(--bg-tertiary);
+}
+
+.actions-container .card {
+    background: var(--bg-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const filePreview = document.getElementById('filePreview');
+    const uploadContent = document.querySelector('.upload-content');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const uploadForm = document.getElementById('uploadForm');
+
+    // Drag and drop functionality
+    if (uploadArea) {
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            uploadArea.classList.add('dragover');
+        }
+
+        function unhighlight(e) {
+            uploadArea.classList.remove('dragover');
+        }
+
+        uploadArea.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+
+        fileInput.addEventListener('change', function(e) {
+            handleFiles(this.files);
+        });
+
+        function handleFiles(files) {
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type === 'text/csv' || file.name.endsWith('.csv')) {
+                    showFilePreview(file);
+                    fileInput.files = files;
+                    uploadBtn.disabled = false;
+                } else {
+                    alert('Please select a valid CSV file.');
+                }
+            }
+        }
+
+        function showFilePreview(file) {
+            document.getElementById('fileName').textContent = file.name;
+            document.getElementById('fileSize').textContent = formatFileSize(file.size);
+            uploadContent.style.display = 'none';
+            filePreview.style.display = 'block';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Form submission with loading state
+        uploadForm.addEventListener('submit', function(e) {
+            uploadBtn.innerHTML = '<span class="loading me-2"></span>Analyzing...';
+            uploadBtn.disabled = true;
+        });
+    }
+
+    // Chart initialization for results
+    {% if corr_json %}
+    try {
+        var corrData = {{ corr_json|safe }};
+        var aqiTrendData = {{ aq_trend_json|safe }};
+        var featImpData = {{ feat_imp_json|safe }};
+
+        // Configure chart layout for dark theme
+        const commonLayout = {
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            font: {
+                color: '#f8fafc',
+                family: 'Inter, sans-serif'
+            },
+            margin: { t: 50, r: 50, b: 50, l: 50 }
+        };
+
+        // Update layouts
+        if (corrData.layout) Object.assign(corrData.layout, commonLayout);
+        if (aqiTrendData.layout) Object.assign(aqiTrendData.layout, commonLayout);
+        if (featImpData.layout) Object.assign(featImpData.layout, commonLayout);
+
+        // Plot charts
+        Plotly.newPlot('corr_heatmap', corrData.data, corrData.layout, {
+            responsive: true,
+            displayModeBar: true,
+            displaylogo: false
+        });
+
+        Plotly.newPlot('aqi_trend', aqiTrendData.data, aqiTrendData.layout, {
+            responsive: true,
+            displayModeBar: true,
+            displaylogo: false
+        });
+
+        Plotly.newPlot('feature_importance', featImpData.data, featImpData.layout, {
+            responsive: true,
+            displayModeBar: true,
+            displaylogo: false
+        });
+
+    } catch (error) {
+        console.error('Error loading chart data:', error);
+    }
+    {% endif %}
+});
+
+function removeFile() {
+    document.getElementById('fileInput').value = '';
+    document.querySelector('.upload-content').style.display = 'block';
+    document.getElementById('filePreview').style.display = 'none';
+    document.getElementById('uploadBtn').disabled = true;
+}
+
+function downloadChart(chartId) {
+    Plotly.downloadImage(chartId, {
+        format: 'png',
+        width: 1200,
+        height: 800,
+        filename: `airpreq_upload_${chartId}_${new Date().toISOString().split('T')[0]}`
+    });
+}
+</script>
 {% endblock %}

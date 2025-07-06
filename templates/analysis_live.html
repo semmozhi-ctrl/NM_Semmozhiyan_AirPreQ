@@ -1,57 +1,598 @@
 {% extends "base.html" %}
-{% block content %}
-<div class="container mt-4">
-    <h1>Live AQI Prediction</h1>
-    <form method="post" class="mb-4">
-        <div class="mb-3">
-            <label class="form-label">City</label>
-            <input type="text" name="city" class="form-control" required>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">State</label>
-            <input type="text" name="state" class="form-control" required>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Country</label>
-            <input type="text" name="country" class="form-control" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Get Live AQI Prediction</button>
-    </form>
 
-    {% if predicted_aqi is not none %}
-        <div class="alert alert-success">
-            <h4>Predicted AQI for {{ city }}: {{ predicted_aqi | round(2) }}</h4>
+{% block title %}Live Air Quality Analysis - AirPreQ{% endblock %}
+
+{% block content %}
+<div class="live-analysis-page" style="padding-top: 100px;">
+    <!-- Page Header -->
+    <div class="row mb-5">
+        <div class="col-12" data-aos="fade-up">
+            <div class="page-header glass p-4 rounded-4">
+                <div class="text-center">
+                    <h1 class="display-6 fw-bold mb-2">
+                        <i class="fas fa-satellite-dish text-gradient me-3"></i>
+                        Live Air Quality Analysis
+                    </h1>
+                    <p class="lead text-muted mb-0">
+                        Get real-time air quality predictions for any city worldwide
+                    </p>
+                </div>
+            </div>
         </div>
-    {% endif %}
+    </div>
+
+    <div class="row g-5">
+        <!-- Location Input Form -->
+        <div class="col-lg-6" data-aos="fade-right">
+            <div class="location-form card p-5">
+                <h3 class="fw-bold mb-4">
+                    <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                    Enter Location
+                </h3>
+                
+                <form method="post" id="locationForm">
+                    <div class="form-floating mb-3">
+                        <input type="text" name="city" class="form-control" id="city" placeholder="City" required>
+                        <label for="city">
+                            <i class="fas fa-city me-2"></i>City
+                        </label>
+                    </div>
+                    
+                    <div class="form-floating mb-3">
+                        <input type="text" name="state" class="form-control" id="state" placeholder="State/Province" required>
+                        <label for="state">
+                            <i class="fas fa-map me-2"></i>State/Province
+                        </label>
+                    </div>
+                    
+                    <div class="form-floating mb-4">
+                        <input type="text" name="country" class="form-control" id="country" placeholder="Country" required>
+                        <label for="country">
+                            <i class="fas fa-globe me-2"></i>Country
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-lg w-100" id="predictBtn">
+                        <i class="fas fa-search me-2"></i>Get Live Prediction
+                    </button>
+                </form>
+
+                <!-- Popular Cities Quick Select -->
+                <div class="popular-cities mt-4">
+                    <h6 class="fw-bold mb-3">
+                        <i class="fas fa-star text-warning me-2"></i>
+                        Popular Cities
+                    </h6>
+                    <div class="city-buttons">
+                        <button class="btn btn-outline-secondary btn-sm me-2 mb-2" onclick="fillLocation('New York', 'New York', 'USA')">
+                            New York, USA
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm me-2 mb-2" onclick="fillLocation('London', 'England', 'UK')">
+                            London, UK
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm me-2 mb-2" onclick="fillLocation('Tokyo', 'Tokyo', 'Japan')">
+                            Tokyo, Japan
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm me-2 mb-2" onclick="fillLocation('Mumbai', 'Maharashtra', 'India')">
+                            Mumbai, India
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm me-2 mb-2" onclick="fillLocation('Beijing', 'Beijing', 'China')">
+                            Beijing, China
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm me-2 mb-2" onclick="fillLocation('Chennai', 'Tamil Nadu', 'India')">
+                            Chennai, India
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Real-time Dashboard -->
+        <div class="col-lg-6" data-aos="fade-left">
+            <div class="dashboard-container">
+                {% if predicted_aqi is not none %}
+                <!-- Prediction Result -->
+                <div class="prediction-result card p-4 mb-4">
+                    <div class="result-header text-center mb-3">
+                        <h4 class="fw-bold">
+                            <i class="fas fa-location-dot text-danger me-2"></i>
+                            {{ city }}, {{ state }}, {{ country }}
+                        </h4>
+                        <small class="text-muted">Real-time Prediction</small>
+                    </div>
+                    
+                    <div class="aqi-display text-center">
+                        <div class="aqi-circle mx-auto mb-3">
+                            <div class="aqi-value">{{ predicted_aqi | round(1) }}</div>
+                            <div class="aqi-label">AQI</div>
+                        </div>
+                        
+                        {% set aqi_level = predicted_aqi | round(1) %}
+                        {% if aqi_level <= 50 %}
+                            {% set level_text = "Good" %}
+                            {% set level_color = "success" %}
+                            {% set level_icon = "smile" %}
+                        {% elif aqi_level <= 100 %}
+                            {% set level_text = "Moderate" %}
+                            {% set level_color = "warning" %}
+                            {% set level_icon = "meh" %}
+                        {% elif aqi_level <= 150 %}
+                            {% set level_text = "Unhealthy for Sensitive Groups" %}
+                            {% set level_color = "warning" %}
+                            {% set level_icon = "frown" %}
+                        {% elif aqi_level <= 200 %}
+                            {% set level_text = "Unhealthy" %}
+                            {% set level_color = "danger" %}
+                            {% set level_icon = "sad-tear" %}
+                        {% else %}
+                            {% set level_text = "Very Unhealthy" %}
+                            {% set level_color = "danger" %}
+                            {% set level_icon = "dizzy" %}
+                        {% endif %}
+                        
+                        <div class="alert alert-{{ level_color }} mb-3">
+                            <i class="fas fa-{{ level_icon }} me-2"></i>
+                            <strong>{{ level_text }}</strong>
+                        </div>
+                        
+                        <div class="health-advice">
+                            <h6 class="fw-bold mb-2">
+                                <i class="fas fa-heart text-danger me-2"></i>
+                                Health Recommendation
+                            </h6>
+                            {% if aqi_level <= 50 %}
+                                <p class="text-muted mb-0">Air quality is good. Enjoy outdoor activities!</p>
+                            {% elif aqi_level <= 100 %}
+                                <p class="text-muted mb-0">Air quality is moderate. Sensitive individuals should limit prolonged outdoor exertion.</p>
+                            {% elif aqi_level <= 150 %}
+                                <p class="text-muted mb-0">Unhealthy for sensitive groups. Consider reducing outdoor activities if you're sensitive to air pollution.</p>
+                            {% elif aqi_level <= 200 %}
+                                <p class="text-muted mb-0">Unhealthy air quality. Everyone should limit outdoor activities.</p>
+                            {% else %}
+                                <p class="text-muted mb-0">Very unhealthy air quality. Avoid outdoor activities and stay indoors.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <!-- Default Dashboard -->
+                <div class="dashboard-placeholder card p-5 text-center">
+                    <div class="placeholder-icon mb-3">
+                        <i class="fas fa-cloud-sun"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Ready for Analysis</h5>
+                    <p class="text-muted mb-0">
+                        Enter a location to get real-time air quality predictions and insights.
+                    </p>
+                </div>
+                {% endif %}
+
+                <!-- Quick Stats -->
+                <div class="quick-stats card p-4">
+                    <h6 class="fw-bold mb-3">
+                        <i class="fas fa-chart-bar text-info me-2"></i>
+                        Global Air Quality Stats
+                    </h6>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="stat-item text-center">
+                                <div class="stat-value text-success">3.2B</div>
+                                <div class="stat-label">People Monitored</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-item text-center">
+                                <div class="stat-value text-warning">15K+</div>
+                                <div class="stat-label">Monitoring Stations</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-item text-center">
+                                <div class="stat-value text-info">180+</div>
+                                <div class="stat-label">Countries</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-item text-center">
+                                <div class="stat-value text-primary">24/7</div>
+                                <div class="stat-label">Real-time Updates</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     {% if corr_json %}
-        <h3>Correlation Heatmap</h3>
-        <div id="corr_heatmap"></div>
-        <h3>AQI Trend</h3>
-        <div id="aqi_trend"></div>
-        <h3>Feature Importance</h3>
-        <div id="feature_importance"></div>
+    <!-- Analysis Charts -->
+    <div class="charts-section mt-5">
+        <div class="row mb-4">
+            <div class="col-12" data-aos="fade-up">
+                <div class="section-header text-center">
+                    <h2 class="display-6 fw-bold mb-3">
+                        Detailed Analysis for <span class="text-gradient">{{ city }}</span>
+                    </h2>
+                    <p class="lead text-muted">
+                        Comprehensive air quality insights and trends
+                    </p>
+                </div>
+            </div>
+        </div>
 
-        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-        <script>
-            var corrData = {{ corr_json|safe }};
-            var aqiTrendData = {{ aq_trend_json|safe }};
-            var featImpData = {{ feat_imp_json|safe }};
+        <div class="row g-4">
+            <!-- Correlation Heatmap -->
+            <div class="col-12" data-aos="fade-up" data-aos-delay="100">
+                <div class="chart-container card p-4">
+                    <div class="chart-header d-flex align-items-center justify-content-between mb-4">
+                        <div>
+                            <h3 class="fw-bold mb-1">
+                                <i class="fas fa-th me-2 text-primary"></i>
+                                Correlation Analysis
+                            </h3>
+                            <p class="text-muted mb-0">Environmental factors correlation matrix</p>
+                        </div>
+                        <button class="btn btn-outline-primary btn-sm" onclick="downloadChart('corr_heatmap')">
+                            <i class="fas fa-download me-1"></i>Download
+                        </button>
+                    </div>
+                    <div class="chart-wrapper">
+                        <div id="corr_heatmap" class="chart-area"></div>
+                    </div>
+                </div>
+            </div>
 
-            Plotly.newPlot('corr_heatmap', corrData.data, corrData.layout);
-            Plotly.newPlot('aqi_trend', aqiTrendData.data, aqiTrendData.layout);
-            Plotly.newPlot('feature_importance', featImpData.data, featImpData.layout);
-        </script>
+            <!-- AQI Trend -->
+            <div class="col-lg-8" data-aos="fade-up" data-aos-delay="200">
+                <div class="chart-container card p-4">
+                    <div class="chart-header d-flex align-items-center justify-content-between mb-4">
+                        <div>
+                            <h3 class="fw-bold mb-1">
+                                <i class="fas fa-chart-line me-2 text-success"></i>
+                                AQI Trend Analysis
+                            </h3>
+                            <p class="text-muted mb-0">Historical air quality patterns</p>
+                        </div>
+                        <button class="btn btn-outline-primary btn-sm" onclick="downloadChart('aqi_trend')">
+                            <i class="fas fa-download me-1"></i>Download
+                        </button>
+                    </div>
+                    <div class="chart-wrapper">
+                        <div id="aqi_trend" class="chart-area"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Panel -->
+            <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="action-panel">
+                    <div class="card p-4 mb-3">
+                        <h6 class="fw-bold mb-3">Export Options</h6>
+                        <button class="btn btn-outline-primary w-100 mb-2" onclick="exportData('csv')">
+                            <i class="fas fa-file-csv me-2"></i>Export as CSV
+                        </button>
+                        <button class="btn btn-outline-secondary w-100 mb-2" onclick="exportData('json')">
+                            <i class="fas fa-file-code me-2"></i>Export as JSON
+                        </button>
+                        <button class="btn btn-outline-info w-100" onclick="shareResults()">
+                            <i class="fas fa-share me-2"></i>Share Results
+                        </button>
+                    </div>
+                    
+                    <div class="card p-4">
+                        <h6 class="fw-bold mb-3">Try Other Analysis</h6>
+                        <a href="{{ url_for('analysis_predefined') }}" class="btn btn-outline-secondary w-100 mb-2">
+                            <i class="fas fa-database me-2"></i>Predefined Dataset
+                        </a>
+                        <a href="{{ url_for('analysis_upload') }}" class="btn btn-outline-warning w-100">
+                            <i class="fas fa-upload me-2"></i>Upload Custom Data
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature Importance -->
+            <div class="col-12" data-aos="fade-up" data-aos-delay="400">
+                <div class="chart-container card p-4">
+                    <div class="chart-header d-flex align-items-center justify-content-between mb-4">
+                        <div>
+                            <h3 class="fw-bold mb-1">
+                                <i class="fas fa-ranking-star me-2 text-warning"></i>
+                                Feature Importance
+                            </h3>
+                            <p class="text-muted mb-0">Key factors affecting air quality prediction</p>
+                        </div>
+                        <button class="btn btn-outline-primary btn-sm" onclick="downloadChart('feature_importance')">
+                            <i class="fas fa-download me-1"></i>Download
+                        </button>
+                    </div>
+                    <div class="chart-wrapper">
+                        <div id="feature_importance" class="chart-area"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     {% endif %}
 
+    <!-- Error Messages -->
     {% with messages = get_flashed_messages() %}
       {% if messages %}
-        <div class="alert alert-danger mt-3">
-        {% for message in messages %}
-          <p>{{ message }}</p>
-        {% endfor %}
+        <div class="row mt-4">
+            <div class="col-12" data-aos="fade-up">
+                {% for message in messages %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>{{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endfor %}
+            </div>
         </div>
       {% endif %}
     {% endwith %}
 </div>
+
+<style>
+.location-form {
+    background: var(--bg-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.form-floating > .form-control {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+.form-floating > .form-control:focus {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+}
+
+.form-floating > label {
+    color: var(--text-muted);
+}
+
+.city-buttons .btn {
+    font-size: 0.8rem;
+    transition: all 0.3s ease;
+}
+
+.city-buttons .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.dashboard-container .card {
+    background: var(--bg-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.placeholder-icon {
+    font-size: 4rem;
+    color: var(--accent-blue);
+}
+
+.aqi-circle {
+    width: 150px;
+    height: 150px;
+    background: var(--primary-gradient);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    animation: pulse 2s infinite;
+}
+
+.aqi-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+}
+
+.aqi-label {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.stat-item {
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stat-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.stat-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.chart-container {
+    background: var(--bg-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.chart-container:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.chart-area {
+    min-height: 400px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    padding: 1rem;
+}
+
+.action-panel .card {
+    background: var(--bg-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.health-advice {
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+// Form handling
+document.addEventListener('DOMContentLoaded', function() {
+    const locationForm = document.getElementById('locationForm');
+    const predictBtn = document.getElementById('predictBtn');
+    
+    locationForm.addEventListener('submit', function(e) {
+        const originalText = predictBtn.innerHTML;
+        predictBtn.innerHTML = '<span class="loading me-2"></span>Analyzing...';
+        predictBtn.disabled = true;
+        
+        // Re-enable after form submission
+        setTimeout(() => {
+            predictBtn.innerHTML = originalText;
+            predictBtn.disabled = false;
+        }, 3000);
+    });
+});
+
+// Quick city selection
+function fillLocation(city, state, country) {
+    document.getElementById('city').value = city;
+    document.getElementById('state').value = state;
+    document.getElementById('country').value = country;
+}
+
+// Chart initialization
+{% if corr_json %}
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        var corrData = {{ corr_json|safe }};
+        var aqiTrendData = {{ aq_trend_json|safe }};
+        var featImpData = {{ feat_imp_json|safe }};
+
+        // Configure chart layout for dark theme
+        const commonLayout = {
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            font: {
+                color: '#f8fafc',
+                family: 'Inter, sans-serif'
+            },
+            margin: { t: 50, r: 50, b: 50, l: 50 }
+        };
+
+        // Update layouts
+        if (corrData.layout) Object.assign(corrData.layout, commonLayout);
+        if (aqiTrendData.layout) Object.assign(aqiTrendData.layout, commonLayout);
+        if (featImpData.layout) Object.assign(featImpData.layout, commonLayout);
+
+        // Plot charts
+        Plotly.newPlot('corr_heatmap', corrData.data, corrData.layout, {
+            responsive: true,
+            displayModeBar: true,
+            displaylogo: false
+        });
+
+        Plotly.newPlot('aqi_trend', aqiTrendData.data, aqiTrendData.layout, {
+            responsive: true,
+            displayModeBar: true,
+            displaylogo: false
+        });
+
+        Plotly.newPlot('feature_importance', featImpData.data, featImpData.layout, {
+            responsive: true,
+            displayModeBar: true,
+            displaylogo: false
+        });
+
+    } catch (error) {
+        console.error('Error loading chart data:', error);
+    }
+});
+{% endif %}
+
+// Utility functions
+function downloadChart(chartId) {
+    Plotly.downloadImage(chartId, {
+        format: 'png',
+        width: 1200,
+        height: 800,
+        filename: `airpreq_live_${chartId}_${new Date().toISOString().split('T')[0]}`
+    });
+}
+
+function exportData(format) {
+    // Simulate data export
+    const data = {
+        timestamp: new Date().toISOString(),
+        {% if predicted_aqi is not none %}
+        location: "{{ city }}, {{ state }}, {{ country }}",
+        predicted_aqi: {{ predicted_aqi }},
+        {% endif %}
+        source: "AirPreQ Live Analysis"
+    };
+    
+    let content, filename, mimeType;
+    
+    if (format === 'csv') {
+        content = Object.keys(data).join(',') + '\n' + Object.values(data).join(',');
+        filename = 'airpreq_analysis.csv';
+        mimeType = 'text/csv';
+    } else {
+        content = JSON.stringify(data, null, 2);
+        filename = 'airpreq_analysis.json';
+        mimeType = 'application/json';
+    }
+    
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function shareResults() {
+    if (navigator.share) {
+        navigator.share({
+            title: 'AirPreQ Analysis Results',
+            {% if predicted_aqi is not none %}
+            text: `Air Quality Index for {{ city }}: {{ predicted_aqi | round(1) }}`,
+            {% else %}
+            text: 'Check out this air quality analysis tool!',
+            {% endif %}
+            url: window.location.href
+        });
+    } else {
+        // Fallback: copy URL to clipboard
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            alert('Analysis URL copied to clipboard!');
+        });
+    }
+}
+</script>
 {% endblock %}

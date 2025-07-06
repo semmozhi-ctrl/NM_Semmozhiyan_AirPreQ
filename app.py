@@ -54,7 +54,8 @@ def analysis_upload():
             flash('No selected file')
             return redirect(request.url)
         if file:
-            df = pd.read_csv(file)
+            # Read CSV from FileStorage object
+            df = pd.read_csv(file.stream)
             df_proc = data_preprocessing.preprocess_data(df)
             lr, rf, X_test_up, y_test_up = model_training.train_models(df_proc)
             rmse_lr, r2_lr = model_evaluation.evaluate_model(lr, X_test_up, y_test_up)
@@ -116,4 +117,14 @@ def analysis_live():
                            corr_json=corr_json, aq_trend_json=aq_trend_json, feat_imp_json=feat_imp_json)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    print("🚀 Starting AirPreQ - Advanced Air Quality Intelligence")
+    print("📍 Server will be available at: http://127.0.0.1:5000")
+    print("✨ Featuring the new modern UI/UX design!")
+    
+    # Get port from environment variable or default to 5000
+    import os
+    port = int(os.environ.get('PORT', 5000))
+    host = os.environ.get('HOST', '0.0.0.0')
+    debug = os.environ.get('FLASK_ENV') != 'production'
+    
+    app.run(host=host, port=port, debug=debug)

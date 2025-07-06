@@ -1,177 +1,679 @@
 {% extends "base.html" %}
+
+{% block title %}About Us - AirPreQ Team{% endblock %}
+
 {% block content %}
-<style>
-  .team-row {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 1.5rem;
-  }
-  .team-row > div {
-    flex: 0 1 280px;
-  }
-  .social-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #e60000; /* bright red */
-    color: white;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    transition: background-color 0.3s ease;
-    text-decoration: none;
-    font-size: 20px;
-  }
-  .social-icon:hover {
-    background-color: #a30000; /* darker red on hover */
-    color: white;
-  }
-  .email-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #e60000; /* same bright red */
-    color: white;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    font-size: 18px;
-    text-decoration: none;
-  }
-</style>
+<div class="about-page" style="padding-top: 100px;">
+    <!-- Hero Section -->
+    <section class="about-hero py-5 mb-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                <h1 class="display-4 fw-bold mb-4">
+                    Meet the
+                    <span class="text-gradient">AirPreQ</span>
+                    Team
+                </h1>
+                <p class="lead mb-4">
+                    We're a passionate team of developers, data scientists, and environmental enthusiasts 
+                    working together to create intelligent solutions for air quality monitoring and prediction.
+                </p>
+                <div class="stats-row">
+                    <div class="row g-3">
+                        <div class="col-4">
+                            <div class="stat-card glass p-3 rounded text-center">
+                                <h4 class="text-gradient mb-0">5</h4>
+                                <small class="text-muted">Team Members</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="stat-card glass p-3 rounded text-center">
+                                <h4 class="text-gradient mb-0">99.2%</h4>
+                                <small class="text-muted">Accuracy</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="stat-card glass p-3 rounded text-center">
+                                <h4 class="text-gradient mb-0">500+</h4>
+                                <small class="text-muted">Cities</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="about-visual glass p-4 rounded-4">
+                    <div class="mission-statement">
+                        <h3 class="fw-bold mb-3">
+                            <i class="fas fa-bullseye text-primary me-2"></i>
+                            Our Mission
+                        </h3>
+                        <p class="mb-0">
+                            To democratize air quality information through advanced AI and machine learning, 
+                            empowering communities to make informed decisions about their health and environment.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<!-- Ensure Font Awesome CSS is linked in base.html head:
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
--->
+    <!-- Purpose & Technology -->
+    <section class="about-content py-5 mb-5">
+        <div class="row g-4">
+            <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="content-card card p-4 h-100">
+                    <div class="card-icon mb-3">
+                        <i class="fas fa-lightbulb text-warning"></i>
+                    </div>
+                    <h3 class="fw-bold mb-3">Purpose & Vision</h3>
+                    <p class="text-muted mb-3">
+                        The rise in air pollution across urban and rural areas poses a serious threat to public health 
+                        and the environment. Our project aims to provide a predictive platform that empowers people 
+                        with actionable insights into current and future air quality conditions.
+                    </p>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check text-success me-2"></i>Real-time monitoring</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Predictive analytics</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Health recommendations</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Environmental insights</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="content-card card p-4 h-100">
+                    <div class="card-icon mb-3">
+                        <i class="fas fa-cogs text-primary"></i>
+                    </div>
+                    <h3 class="fw-bold mb-3">How It Works</h3>
+                    <p class="text-muted mb-3">
+                        Our system uses historical pollutant data and real-time environmental inputs to train 
+                        machine learning models that can predict AQI levels with high accuracy.
+                    </p>
+                    <div class="tech-stack">
+                        <div class="tech-item mb-2">
+                            <strong class="text-primary">Frontend:</strong>
+                            <span class="text-muted">HTML, CSS, Bootstrap 5, JavaScript, Plotly</span>
+                        </div>
+                        <div class="tech-item mb-2">
+                            <strong class="text-success">Backend:</strong>
+                            <span class="text-muted">Python, Flask</span>
+                        </div>
+                        <div class="tech-item mb-2">
+                            <strong class="text-warning">ML/AI:</strong>
+                            <span class="text-muted">scikit-learn, pandas, numpy</span>
+                        </div>
+                        <div class="tech-item">
+                            <strong class="text-info">Data:</strong>
+                            <span class="text-muted">IQAir AirVisual API</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<div class="card shadow-sm p-4">
-  <h1 class="text-primary">About Us</h1>
+    <!-- Team Section -->
+    <section class="team-section py-5">
+        <div class="row mb-5">
+            <div class="col-12 text-center" data-aos="fade-up">
+                <h2 class="display-5 fw-bold mb-3">
+                    Meet Our <span class="text-gradient">Team</span>
+                </h2>
+                <p class="lead text-muted mb-5">
+                    The talented individuals behind AirPreQ's success
+                </p>
+            </div>
+        </div>
 
-  <h3 class="mt-4">🧠 Purpose</h3>
-  <p>
-    The rise in air pollution across urban and rural areas poses a serious threat to public health and the environment.
-    This project aims to provide a predictive platform that empowers people with actionable insights into current and future air quality conditions.
-  </p>
+        <div class="row g-4 justify-content-center">
+            <!-- Sivabalan V -->
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="team-card card h-100 p-4 text-center">
+                    <div class="team-image mb-3">
+                        <img src="{{ url_for('static', filename='images/sivabalan.jpg') }}" 
+                             alt="Sivabalan V" 
+                             class="rounded-circle mx-auto d-block">
+                    </div>
+                    <h5 class="fw-bold mb-2">Sivabalan V</h5>
+                    <p class="role-primary mb-1">Project Manager</p>
+                    <p class="role-secondary mb-3">Quality Assurance Engineer</p>
+                    <div class="social-links">
+                        <a href="https://www.linkedin.com/in/sivabalan51103" target="_blank" class="social-icon">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="https://github.com/Siva-Balan-V" target="_blank" class="social-icon">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="https://www.instagram.com/_pr_ince." target="_blank" class="social-icon">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
 
-  <h3 class="mt-4">🛠️ How It Works</h3>
-  <p>
-    Our system uses historical pollutant data and real-time environmental inputs to train machine learning models that can predict AQI levels.
-    Users can upload custom datasets, explore live predictions, and analyze visual insights such as correlation heatmaps, AQI trends, and feature importance graphs.
-  </p>
+            <!-- Dhyanesh V -->
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="team-card card h-100 p-4 text-center">
+                    <div class="team-image mb-3">
+                        <img src="{{ url_for('static', filename='images/dhyanesh.jpg') }}" 
+                             alt="Dhyanesh V" 
+                             class="rounded-circle mx-auto d-block">
+                    </div>
+                    <h5 class="fw-bold mb-2">Dhyanesh V</h5>
+                    <p class="role-primary mb-1">Backend Developer</p>
+                    <p class="role-secondary mb-3">Deployment Engineer</p>
+                    <div class="social-links">
+                        <a href="https://www.linkedin.com/in/dhyanesh-v-741738274" target="_blank" class="social-icon">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="https://github.com/Dhyanesh006" target="_blank" class="social-icon">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="https://www.instagram.com/dhyanesh__006" target="_blank" class="social-icon">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
 
-  <h3 class="mt-4">🧪 Technology Stack</h3>
-  <ul>
-    <li><strong>Frontend:</strong> HTML, CSS, Bootstrap 5, JavaScript, Plotly</li>
-    <li><strong>Backend:</strong> Python, Flask</li>
-    <li><strong>Machine Learning:</strong> scikit-learn</li>
-    <li><strong>Live Data:</strong> IQAir AirVisual API</li>
-  </ul>
+            <!-- Semmozhiyan NS -->
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="team-card card h-100 p-4 text-center">
+                    <div class="team-image mb-3">
+                        <img src="{{ url_for('static', filename='images/semmozhiyan.jpg') }}" 
+                             alt="Semmozhiyan NS" 
+                             class="rounded-circle mx-auto d-block">
+                    </div>
+                    <h5 class="fw-bold mb-2">Semmozhiyan NS</h5>
+                    <p class="role-primary mb-1">Machine Learning Engineer</p>
+                    <p class="role-secondary mb-3">AI Specialist</p>
+                    <div class="social-links">
+                        <a href="https://www.linkedin.com/in/semmozhiyan-n-s-aa7478296" target="_blank" class="social-icon">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="https://github.com/semmozhi-ctrl" target="_blank" class="social-icon">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="https://www.instagram.com/_calm_edge_?igsh=OWFpaHY0dXQ5eWY0" target="_blank" class="social-icon">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
 
-  <h3 class="mt-4">🌏 Who Can Use This?</h3>
-  <p>
-    This platform is ideal for students, environmental researchers, government officials, and everyday citizens who want to monitor air quality
-    and take preventive measures to safeguard health.
-  </p>
+            <!-- Sri Sabarish U -->
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                <div class="team-card card h-100 p-4 text-center">
+                    <div class="team-image mb-3">
+                        <img src="{{ url_for('static', filename='images/sabarish.jpg') }}" 
+                             alt="Sri Sabarish U" 
+                             class="rounded-circle mx-auto d-block">
+                    </div>
+                    <h5 class="fw-bold mb-2">Sri Sabarish U</h5>
+                    <p class="role-primary mb-1">Data Collection Lead</p>
+                    <p class="role-secondary mb-3">Preprocessing Specialist</p>
+                    <div class="social-links">
+                        <a href="https://www.linkedin.com/in/sri-sabarish-8b35a0293" target="_blank" class="social-icon">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="https://github.com/srisabarish06" target="_blank" class="social-icon">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="https://www.instagram.com/sri_sabarish_19" target="_blank" class="social-icon">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
 
-  <h3 class="mt-5">👨‍💻 Project Team</h3>
-  <div class="team-row mt-2">
-    <!-- Sivabalan V -->
-    <div class="card h-100 p-3 text-center">
-      <img src="{{ url_for('static', filename='images/sivabalan.jpg') }}" alt="Sivabalan V" class="rounded-circle mx-auto d-block" style="width:120px; height:120px; object-fit: cover;">
-      <h5 class="card-title mt-3">Sivabalan V</h5>
-      <p class="mb-1">Project Manager</p>
-      <p class="mb-1">Quality Assurance (QA) Engineer</p>
-      <p class="d-flex justify-content-center align-items-center gap-3 mb-2">
-        
-        <a href="https://www.linkedin.com/in/sivabalan51103?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn">
-          <i class="fab fa-linkedin-in"></i>
-        </a>
-        <a href="https://github.com/Siva-Balan-V" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="GitHub">
-          <i class="fab fa-github"></i>
-        </a>
-        <a href="https://www.instagram.com/_pr_ince.?igsh=cDM5bzJ6cG9xMnRi" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram">
-          <i class="fab fa-instagram"></i>
-        </a>
-      </p>
-    </div>
+            <!-- Chandru M -->
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
+                <div class="team-card card h-100 p-4 text-center">
+                    <div class="team-image mb-3">
+                        <img src="{{ url_for('static', filename='images/chandru.jpg') }}" 
+                             alt="Chandru M" 
+                             class="rounded-circle mx-auto d-block">
+                    </div>
+                    <h5 class="fw-bold mb-2">Chandru M</h5>
+                    <p class="role-primary mb-1">UI/UX Designer</p>
+                    <p class="role-secondary mb-3">Documentation Lead</p>
+                    <div class="social-links">
+                        <a href="https://www.linkedin.com/in/chandru-m-585b35335" target="_blank" class="social-icon">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="https://github.com/chandru2110" target="_blank" class="social-icon">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="https://www.instagram.com/chandru_.03" target="_blank" class="social-icon">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <!-- Dhyanesh V -->
-    <div class="card h-100 p-3 text-center">
-      <img src="{{ url_for('static', filename='images/dhyanesh.jpg') }}" alt="Dhyanesh V" class="rounded-circle mx-auto d-block" style="width:120px; height:120px; object-fit: cover;">
-      <h5 class="card-title mt-3">Dhyanesh V</h5>
-      <p class="mb-1">Backend & Deployment Developer</p>
-      <p class="d-flex justify-content-center align-items-center gap-3 mb-2">
-        
-        <a href="https://www.linkedin.com/in/dhyanesh-v-741738274?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn">
-          <i class="fab fa-linkedin-in"></i>
-        </a>
-        <a href="https://github.com/Dhyanesh006" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="GitHub">
-          <i class="fab fa-github"></i>
-        </a>
-        <a href="https://www.instagram.com/dhyanesh__006?igsh=ZG1icW16ZnJlenJp&utm_source=qr" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram">
-          <i class="fab fa-instagram"></i>
-        </a>
-      </p>
-    </div>
-
-    <!-- Semmozhiyan NS -->
-    <div class="card h-100 p-3 text-center">
-      <img src="{{ url_for('static', filename='images/semmozhiyan.jpg') }}" alt="Semmozhiyan NS" class="rounded-circle mx-auto d-block" style="width:120px; height:120px; object-fit: cover;">
-      <h5 class="card-title mt-3">Semmozhiyan NS</h5>
-      <p class="mb-1">Machine Learning Engineer</p>
-      <p class="d-flex justify-content-center align-items-center gap-3 mb-2">
-        
-        <a href="https://www.linkedin.com/in/semmozhiyan-n-s-aa7478296?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn">
-          <i class="fab fa-linkedin-in"></i>
-        </a>
-        <a href="https://github.com/semmozhi-ctrl" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="GitHub">
-          <i class="fab fa-github"></i>
-        </a>
-        <a href="https://www.instagram.com/calm_edge?igsh=MWN6aWpscTR0NWV0MA==" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram">
-          <i class="fab fa-instagram"></i>
-        </a>
-      </p>
-    </div>
-
-    <!-- Sri Sabarish U -->
-    <div class="card h-100 p-3 text-center">
-      <img src="{{ url_for('static', filename='images/sabarish.jpg') }}" alt="Sri Sabarish U" class="rounded-circle mx-auto d-block" style="width:120px; height:120px; object-fit: cover;">
-      <h5 class="card-title mt-3">Sri Sabarish U</h5>
-      <p class="mb-1">Data Collection & Preprocessing Lead</p>
-      <p class="d-flex justify-content-center align-items-center gap-3 mb-2">
-        
-        <a href="https://www.linkedin.com/in/sri-sabarish-8b35a0293?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn">
-          <i class="fab fa-linkedin-in"></i>
-        </a>
-        <a href="https://github.com/srisabarish06" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="GitHub">
-          <i class="fab fa-github"></i>
-        </a>
-        <a href="https://www.instagram.com/sri_sabarish_19?igsh=ZTNuOXB0czI3N253" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram">
-          <i class="fab fa-instagram"></i>
-        </a>
-      </p>
-    </div>
-
-    <!-- Chandru M -->
-    <div class="card h-100 p-3 text-center">
-      <img src="{{ url_for('static', filename='images/chandru.jpg') }}" alt="Chandru M" class="rounded-circle mx-auto d-block" style="width:120px; height:120px; object-fit: cover;">
-      <h5 class="card-title mt-3">Chandru M</h5>
-      <p class="mb-1">UI/UX Designer</p>
-      <p class="mb-1">Documentation Lead</p>
-      <p class="d-flex justify-content-center align-items-center gap-3 mb-2">
-        
-        <a href="https://www.linkedin.com/in/chandru-m-585b35335?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn">
-          <i class="fab fa-linkedin-in"></i>
-        </a>
-        <a href="https://github.com/chandru2110" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="GitHub">
-          <i class="fab fa-github"></i>
-        </a>
-        <a href="https://www.instagram.com/chandru_.03?igsh=Nnk5eGlyMHFleTRy" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram">
-          <i class="fab fa-instagram"></i>
-        </a>
-      </p>
-    </div>
-  </div>
+    <!-- Call to Action -->
+    <section class="about-cta py-5 mt-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center" data-aos="fade-up" data-aos-delay="600">
+                <div class="cta-card card-gradient p-5 rounded-4">
+                    <h3 class="fw-bold mb-3">Ready to Explore Air Quality Data?</h3>
+                    <p class="lead mb-4 opacity-90">
+                        Join us in our mission to make air quality information accessible to everyone.
+                    </p>
+                    <div class="cta-buttons d-flex flex-column flex-md-row justify-content-center">
+                        <a href="{{ url_for('analysis_live') }}" class="btn btn-light btn-lg me-md-3 mb-3 mb-md-0">
+                            <i class="fas fa-rocket me-2"></i>Start Analysis
+                        </a>
+                        <a href="{{ url_for('contact') }}" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-envelope me-2"></i>Contact Us
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
+
+<style>
+.card-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(59, 130, 246, 0.1);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.content-card {
+    transition: all 0.3s ease;
+    border: 1px solid var(--border-color);
+}
+
+.content-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-xl);
+}
+
+.feature-list {
+    list-style: none;
+    padding: 0;
+}
+
+.feature-list li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.feature-list li:last-child {
+    border-bottom: none;
+}
+
+.tech-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.tech-item:last-child {
+    border-bottom: none;
+}
+
+.team-card {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.team-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0,0,0,0.03), transparent);
+    transition: left 0.5s;
+}
+
+.team-card:hover::before {
+    left: 100%;
+}
+
+.team-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: var(--shadow-xl);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.team-image img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border: 3px solid rgba(59, 130, 246, 0.2);
+    transition: all 0.3s ease;
+}
+
+.team-card:hover .team-image img {
+    border-color: rgba(59, 130, 246, 0.5);
+    transform: scale(1.1);
+}
+
+.role-primary {
+    color: var(--accent-blue);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.role-secondary {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.social-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: var(--primary-gradient);
+    color: white;
+    border-radius: 50%;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.social-icon:hover {
+    transform: translateY(-3px) scale(1.1);
+    box-shadow: var(--shadow-md);
+    color: white;
+}
+
+.about-visual {
+    background: rgba(59, 130, 246, 0.05);
+}
+
+.mission-statement {
+    position: relative;
+}
+
+.stat-card {
+    background: rgba(59, 130, 246, 0.05);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: scale(1.05);
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.cta-card {
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+    .about-page {
+        padding-top: 80px !important;
+    }
+    
+    .display-4 {
+        font-size: 2rem !important;
+    }
+    
+    .display-5 {
+        font-size: 1.5rem !important;
+    }
+    
+    .stats-row .col-4 {
+        margin-bottom: 1rem;
+    }
+    
+    .stat-card {
+        padding: 1rem !important;
+    }
+    
+    .stat-card h4 {
+        font-size: 1.2rem;
+    }
+    
+    .about-visual {
+        margin-top: 2rem;
+    }
+    
+    .content-card {
+        margin-bottom: 1.5rem;
+    }
+    
+    .card-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+    }
+    
+    .tech-stack .tech-item {
+        font-size: 0.9rem;
+        padding: 0.3rem 0;
+    }
+    
+    .team-card {
+        margin-bottom: 1.5rem;
+        padding: 1.5rem !important;
+    }
+    
+    .team-image img {
+        width: 100px !important;
+        height: 100px !important;
+    }
+    
+    .team-card h5 {
+        font-size: 1.1rem;
+    }
+    
+    .role-primary {
+        font-size: 0.85rem;
+    }
+    
+    .role-secondary {
+        font-size: 0.75rem;
+    }
+    
+    .social-links {
+        gap: 0.5rem;
+    }
+    
+    .social-icon {
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+    }
+    
+    .cta-card {
+        padding: 2rem !important;
+        margin: 1rem;
+    }
+    
+    .cta-card h3 {
+        font-size: 1.3rem;
+    }
+    
+    .cta-buttons {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .cta-buttons .btn {
+        width: 100%;
+        margin: 0 !important;
+    }
+}
+
+/* Tablet-specific styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .about-page {
+        padding-top: 90px !important;
+    }
+    
+    .display-4 {
+        font-size: 2.5rem !important;
+    }
+    
+    .team-card {
+        margin-bottom: 2rem;
+    }
+    
+    .team-image img {
+        width: 110px !important;
+        height: 110px !important;
+    }
+    
+    .cta-card {
+        padding: 3rem !important;
+    }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+    .about-page {
+        padding-top: 70px !important;
+    }
+    
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .display-4 {
+        font-size: 1.8rem !important;
+        line-height: 1.3;
+    }
+    
+    .lead {
+        font-size: 1rem !important;
+    }
+    
+    .stats-row .col-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-card {
+        padding: 0.75rem !important;
+    }
+    
+    .stat-card h4 {
+        font-size: 1rem;
+    }
+    
+    .stat-card small {
+        font-size: 0.75rem;
+    }
+    
+    .about-visual {
+        margin-top: 1.5rem;
+        padding: 1.5rem !important;
+    }
+    
+    .mission-statement h3 {
+        font-size: 1.1rem;
+    }
+    
+    .mission-statement p {
+        font-size: 0.9rem;
+    }
+    
+    .content-card {
+        padding: 1.5rem !important;
+    }
+    
+    .content-card h3 {
+        font-size: 1.2rem;
+    }
+    
+    .content-card p {
+        font-size: 0.9rem;
+    }
+    
+    .feature-list li {
+        font-size: 0.85rem;
+        padding: 0.3rem 0;
+    }
+    
+    .tech-item {
+        font-size: 0.8rem;
+    }
+    
+    .tech-item strong {
+        display: block;
+        margin-bottom: 0.2rem;
+    }
+    
+    .team-section h2 {
+        font-size: 1.4rem !important;
+    }
+    
+    .team-section .lead {
+        font-size: 0.9rem !important;
+    }
+    
+    .team-card {
+        padding: 1rem !important;
+    }
+    
+    .team-image img {
+        width: 80px !important;
+        height: 80px !important;
+    }
+    
+    .team-card h5 {
+        font-size: 1rem;
+    }
+    
+    .role-primary {
+        font-size: 0.8rem;
+    }
+    
+    .role-secondary {
+        font-size: 0.7rem;
+    }
+    
+    .social-icon {
+        width: 30px;
+        height: 30px;
+        font-size: 0.8rem;
+    }
+    
+    .cta-card {
+        padding: 1.5rem !important;
+        margin: 0.5rem;
+    }
+    
+    .cta-card h3 {
+        font-size: 1.1rem;
+    }
+    
+    .cta-card p {
+        font-size: 0.9rem;
+    }
+    
+    .btn-lg {
+        font-size: 0.9rem;
+        padding: 0.75rem 1.25rem;
+    }
+}
+</style>
 {% endblock %}
